@@ -1,0 +1,132 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://xmlns.jcp.org/jsf/html"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                template="/WEB-INF/template.xhtml"
+                xmlns:f="http://java.sun.com/jsf/core">
+
+    
+    <ui:define name="corpo"> 
+    
+	           
+    <title>Gerenciar Usuários</title>  
+	<h:form id="formListagem">
+		<p:panel header="Gerenciar Usuários">
+			<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
+				paginator="true" value="#{usuarioBean.usuarios}" var="usuario"
+				rows="11" paginatorPosition="top">
+				<f:facet name="header">
+					<p:commandButton value="Adicionar Usuário" oncomplete="PF('dialogo').show();"
+						actionListener="#{usuarioBean.novo}"
+						update=":mensagem :formCadastro:painel">
+						<f:actionListener
+							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton>
+				</f:facet>
+
+				<p:column headerText="#{msg.cabecalhoNome}" width="300" sortBy="#{usuario.pessoa.nome}"
+					filterBy="#{usuario.pessoa.nome}">
+					<h:outputText value="#{usuario.pessoa.nome}" />
+				</p:column>
+
+				<p:column headerText="CPF"  width="150" sortBy="#{usuario.pessoa.cpf}"
+					filterBy="#{usuario.pessoa.cpf}">
+					<h:outputText value="#{usuario.pessoa.cpf}" />
+				</p:column>
+				
+				<p:column headerText="Matricula" width="150" sortBy="#{usuario.pessoa.matricula}"
+					filterBy="#{usuario.pessoa.matricula}">
+					<h:outputText value="#{usuario.pessoa.matricula}" />
+				</p:column>
+				
+				<p:column headerText="Data de Cadastro"
+					sortBy="#{usuario.dataCadastro}">
+					<h:outputText value="#{usuario.dataCadastro}">
+						<f:convertDateTime locale="pt_BR" />
+					</h:outputText>
+				</p:column>
+				
+
+				<p:column headerText="Tipo" sortBy="#{usuario.tipoFormatado}">
+					<h:outputText value="#{usuario.tipoFormatado}" />
+				</p:column>
+
+				<p:column headerText="Liberado"  width="100" sortBy="#{usuario.ativoFormatado}">
+					<h:outputText value="#{usuario.ativoFormatado}" />
+				</p:column>
+
+				<p:column headerText="Opções"  width="100">
+				
+				<p:commandButton icon="ui-icon-trash"
+							style="height:20px;width:20px">
+							
+							</p:commandButton>
+
+						<p:commandButton icon="ui-icon-pencil"
+						actionListener="#{usuarioBean.editar}"
+						update=":mensagem :formCadastro:painel"
+						oncomplete="PF('dialogo').show();">
+						<f:attribute name="usuarioSelecionado" value="#{usuario}" />
+						<f:actionListener
+							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton>
+				
+				</p:column>
+			</p:dataTable>
+		</p:panel>
+	</h:form>
+
+	<p:dialog header="Usuários - Cadastro" widgetVar="dialogo"
+		draggable="false" resizable="false" modal="false" closable="false">
+		<h:form id="formCadastro">
+			<h:panelGrid id="painel" columns="2">
+				<p:outputLabel for="pessoa" value="Pessoa:" />
+				<p:selectOneMenu id="pessoa" filter="true"
+					value="#{usuarioBean.usuario.pessoa}" required="true"
+					requiredMessage="O campo 'Pessoa' é obrigatório"
+					converter="omnifaces.SelectItemsConverter">
+					<f:selectItem noSelectionOption="true"
+						itemLabel="Selecione uma pessoa" />
+					<f:selectItems value="#{usuarioBean.pessoas}" var="pessoa"
+						itemValue="#{pessoa}" itemLabel="Matricula: #{pessoa.matricula} -  #{pessoa.nome} " />
+				</p:selectOneMenu>
+
+				<p:outputLabel for="senha" value="Senha:" />
+				<p:password id="senha" maxlength="8" size="10"
+					value="#{usuarioBean.usuario.senha}" required="true"
+					requiredMessage="O campo 'Senha' é obrigatório"
+					validatorMessage="Informe uma senha de 5 a 8 caracteres">
+					<f:validateLength minimum="5" maximum="8" />
+				</p:password>
+				
+				<p:outputLabel for="dataCadastro" value="Data de Cadastro:" />
+				<p:calendar id="dataCadastro"
+					value="#{usuarioBean.usuario.dataCadastro}" required="true"
+					requiredMessage="O campo 'Data de Cadastro' é obrigatório"
+					size="10" locale="pt_BR" />
+
+				<p:outputLabel for="tipo" value="Tipo:" />
+				<p:selectOneRadio id="tipo" value="#{usuarioBean.usuario.tipo}"
+					required="true" requiredMessage="O campo 'Tipo' ´obrigatório">
+					<f:selectItem itemValue="O" itemLabel="Operacional" />
+					<f:selectItem itemValue="J" itemLabel="Juridico" />
+					<f:selectItem itemValue="M" itemLabel="Monitoramento" />
+					<f:selectItem itemValue="S" itemLabel="SAC" />
+				</p:selectOneRadio>
+
+				<p:outputLabel for="ativo" value="Liberado:" />
+				<p:selectBooleanCheckbox id="ativo"
+					value="#{usuarioBean.usuario.ativo}" required="true"
+					requiredMessage="O campo 'Ativo' é obrigatório" />
+			</h:panelGrid>
+
+			<h:panelGrid columns="2">
+				<p:commandButton value="Salvar"
+					update=":mensagem :formCadastro:painel :formListagem:tabela"
+					actionListener="#{usuarioBean.salvar}" />
+				<p:commandButton value="Fechar" oncomplete="PF('dialogo').hide();" />
+			</h:panelGrid>
+		</h:form>
+	</p:dialog>
+</ui:define>
+</ui:composition>

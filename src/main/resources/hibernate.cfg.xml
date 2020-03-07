@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!DOCTYPE hibernate-configuration PUBLIC
+        "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
+
+<hibernate-configuration>
+
+	<session-factory>
+
+		
+		<!-- 		Configurações de Conexão com o Banco de Dados LOCAL -->
+		
+		<property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+		<property name="connection.url">jdbc:mysql://127.0.0.1:3306/sgo</property>
+		<property name="connection.username">root</property>
+		<property name="connection.password">d23m09</property>
+		
+		
+
+		<!-- Pool de Conexões -->
+		<property name="connection.pool_size">1</property>
+
+		<!-- SQL dialect -->
+		<property name="dialect">org.hibernate.dialect.MySQL5InnoDBDialect</property>
+
+		<!-- Gerenciamento do Contexto das Sessões -->
+		<property name="current_session_context_class">thread</property>
+
+		<!-- Cache de Segundo Nível -->
+		<property name="cache.provider_class">org.hibernate.cache.internal.NoCacheProvider</property>
+
+		<!-- Mostra as SQLs Geradas -->
+		<property name="show_sql">true</property>
+
+		<!-- Cria as tabelas do banco de dados -->
+		<property name="hbm2ddl.auto">update</property>
+		
+		<!-- Mapeamento das entidades -->
+		<mapping class="br.pro.tcc.sgo.domain.Cidade" />
+		<mapping class="br.pro.tcc.sgo.domain.Estado" />
+		<mapping class="br.pro.tcc.sgo.domain.Pessoa" />
+		
+		<mapping class="br.pro.tcc.sgo.domain.Usuario" />
+		<mapping class="br.pro.tcc.sgo.domain.Motorista" />
+		<mapping class="br.pro.tcc.sgo.domain.Veiculo" />
+		
+		<mapping class="br.pro.tcc.sgo.domain.Irregularidade" />
+		<mapping class="br.pro.tcc.sgo.domain.Infracao" />
+		<mapping class="br.pro.tcc.sgo.domain.Reclamacao" />
+		
+	</session-factory>
+
+</hibernate-configuration>

@@ -1,0 +1,488 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+
+	<ui:define name="corpo">
+<title>Gerenciar Reclamações</title>  
+		<h:form id="formListagem">
+			<p:panel header="Gerenciar Reclamação">
+				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
+					paginator="true" value="#{reclamacaoBean.reclamacoes}" var="reclamacao"
+					rows="5" paginatorPosition="top">
+					<f:facet name="header">
+						<p:commandButton icon="ui-icon-plus"
+							actionListener="#{reclamacaoBean.novo}" value="Adicionar Reclamação"
+							oncomplete="PF('dialogo').show();"
+							update=":mensagem :formCadastro:painel">
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+
+					
+					</f:facet>
+					<p:column headerText="Nome do Cliente" filterBy="#{reclamacao.cliente}"
+						filterMatchMode="contains" sortBy="#{reclamacao.cliente}">
+						<h:outputText value="#{reclamacao.cliente}" />
+					</p:column>
+					
+					<p:column headerText="Telefone Cliente"  sortBy="#{reclamacao.foneCliente}">
+						<h:outputText value="#{reclamacao.foneCliente}" />
+					</p:column>
+
+					<p:column headerText="Nome do Motorista" filterBy="#{reclamacao.nome}"
+						filterMatchMode="contains" sortBy="#{reclamacao.nome}">
+						<h:outputText value="#{reclamacao.nome}" />
+					</p:column>
+
+					<p:column headerText="Mat. Motorista" sortBy="#{reclamacao.matricula}">
+						<h:outputText value="#{reclamacao.matricula}" />
+					</p:column>
+					
+					<p:column headerText="Data de Cadastro"
+					sortBy="#{reclamacao.dataCadastro}">
+					<h:outputText value="#{reclamacao.dataCadastro}">
+						<f:convertDateTime locale="pt_BR" />
+					</h:outputText>
+				</p:column>
+
+					<p:column headerText="Veículo" sortBy="#{reclamacao.veiculo}">
+						<h:outputText value="#{reclamacao.veiculo}"/>
+							
+					</p:column>
+					
+					
+					<p:column headerText="Local da Irregularidade"
+						filterBy="#{reclamacao.local}"
+						filterMatchMode="contains"
+						sortBy="#{reclamacao.local}">
+						<h:outputText value="#{reclamacao.local}" />
+					</p:column>
+					
+					<p:column headerText="Reclamação" filterBy="#{reclamacao.reclamacao}" sortBy="#{reclamacao.reclamacao}" >
+					<h:outputText value="#{reclamacao.reclamacao}">
+						<f:convertDateTime locale="pt_BR" />
+					</h:outputText>
+				</p:column>
+						
+
+				<p:column headerText="Opções" >
+					<p:commandButton title="Excluir" icon="ui-icon-trash" rendered="#{autenticacaoBean.temPermissoes(['A'])}"	actionListener="#{reclamacaoBean.excluir}"					
+						update=":mensagem :formListagem:tabela">
+						<p:confirm header="Confirmação"
+							message="Deseja excluir a Reclamação?" icon="ui-icon-alert" />
+						<f:attribute name="reclamacaoSelecionada" value="#{reclamacao}" />
+					</p:commandButton>
+
+					<p:commandButton title="Editar" icon="ui-icon-pencil"
+						actionListener="#{reclamacaoBean.editar}"
+						update=":mensagem :formEdit:painelEdit"
+						oncomplete="PF('dialogoEdit').show();">
+						<f:attribute name="reclamacaoSelecionada" value="#{reclamacao}" />
+						<f:actionListener
+							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton>
+					
+					<p:commandButton title="Download" icon="ui-icon-arrowthick-1-s"
+						actionListener="#{reclamacaoBean.download}"
+						ajax="false">
+						<f:attribute name="reclamacaoSelecionada" value="#{reclamacao}" />
+						<p:fileDownload value="#{reclamacaoBean.foto}" />
+					</p:commandButton>
+					
+									</p:column>
+			</p:dataTable>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			</p:panel>
+		</h:form>
+
+		<p:dialog header="Cadastro de Reclamações" widgetVar="dialogo"
+			draggable="false" resizable="false" modal="false" closable="false">
+			<h:form id="formCadastro" enctype="multipart/form-data">
+				
+				<h:panelGrid id="painel" columns="2">
+				
+				<p:outputLabel for="cliente" value="Nome do Cliente: " />
+					<p:inputText id="cliente" maxlength="50" size="30"
+						value="#{reclamacaoBean.reclamacao.cliente}" required="true"
+						requiredMessage="O campo 'Nome do Cliente' é obrigatório" />
+				
+				<p:outputLabel for="telefone" value="Telefone Cliente: " />
+					<p:inputMask id="telefone" mask="(99) 9999-9999" size="15"
+						value="#{reclamacaoBean.reclamacao.foneCliente}" required="true"
+						requiredMessage="O campo 'Celular' é obrigatório"/>
+						
+						
+				
+					<p:outputLabel for="nome" value="Nome do Motorista: " />
+					<p:inputText id="nome" maxlength="50" size="30"
+						value="#{reclamacaoBean.reclamacao.nome}" required="true"
+						requiredMessage="O campo 'Motorista' é obrigatório" />
+
+					<p:outputLabel for="matricula" value="Matricula do Motorista: " />
+					<p:inputText id="matricula" maxlength="5" size="10"
+						value="#{reclamacaoBean.reclamacao.matricula}" required="true"
+						requiredMessage="O campo 'Matricula' é obrigatório"
+						converterMessage="Informe um valor válido para o campo 'Matricula'"
+						validatorMessage="Informe um valor entre 0 e 13000 para o campo 'Matricula'">
+						<f:validateLongRange minimum="0" maximum="13000" />
+					</p:inputText>
+
+					<p:outputLabel for="veiculo" value="Veículo: " />
+				<p:selectOneMenu id="veiculo" value="#{reclamacaoBean.reclamacao.veiculo}" converter="omnifaces.SelectItemsConverter" filter="true" style="width:200px">
+		
+		
+		<f:selectItem itemLabel="Selecione o Veículo" itemValue="" value="#{reclamacaoBean.reclamacao.veiculo}" noSelectionOption="true" />
+		<f:selectItem itemLabel="RJ 117.001" itemValue="RJ 117.001" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.002" itemValue="RJ 117.002" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.003" itemValue="RJ 117.003" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.004" itemValue="RJ 117.004" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.005" itemValue="RJ 117.005" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.006" itemValue="RJ 117.006" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.007" itemValue="RJ 117.007" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.008" itemValue="RJ 117.008" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.009" itemValue="RJ 117.009" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.010" itemValue="RJ 117.010" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.011" itemValue="RJ 117.011" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.012" itemValue="RJ 117.012" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.013" itemValue="RJ 117.013" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.014" itemValue="RJ 117.014" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.015" itemValue="RJ 117.015" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.016" itemValue="RJ 117.016" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.017" itemValue="RJ 117.017" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.018" itemValue="RJ 117.018" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.019" itemValue="RJ 117.019" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.020" itemValue="RJ 117.020" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.021" itemValue="RJ 117.021" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.022" itemValue="RJ 117.022" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.023" itemValue="RJ 117.023" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.024" itemValue="RJ 117.024" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.025" itemValue="RJ 117.025" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.026" itemValue="RJ 117.026" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.027" itemValue="RJ 117.027" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.028" itemValue="RJ 117.028" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.029" itemValue="RJ 117.029" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.030" itemValue="RJ 117.030" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		
+		<f:selectItem itemLabel="RJ 117.031" itemValue="RJ 117.031" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.032" itemValue="RJ 117.032" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.033" itemValue="RJ 117.033" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.034" itemValue="RJ 117.034" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.035" itemValue="RJ 117.035" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.036" itemValue="RJ 117.036" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.037" itemValue="RJ 117.037" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.038" itemValue="RJ 117.038" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.039" itemValue="RJ 117.039" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.040" itemValue="RJ 117.040" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.041" itemValue="RJ 117.041" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.042" itemValue="RJ 117.042" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.043" itemValue="RJ 117.043" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.044" itemValue="RJ 117.044" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.045" itemValue="RJ 117.045" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.046" itemValue="RJ 117.046" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.047" itemValue="RJ 117.047" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.048" itemValue="RJ 117.048" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.049" itemValue="RJ 117.049" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.050" itemValue="RJ 117.050" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.051" itemValue="RJ 117.051" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.052" itemValue="RJ 117.052" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.053" itemValue="RJ 117.053" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.054" itemValue="RJ 117.054" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.055" itemValue="RJ 117.055" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.056" itemValue="RJ 117.056" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.057" itemValue="RJ 117.057" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.058" itemValue="RJ 117.058" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.059" itemValue="RJ 117.059" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.060" itemValue="RJ 117.060" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		
+		<f:selectItem itemLabel="RJ 117.061" itemValue="RJ 117.061" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.062" itemValue="RJ 117.062" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.063" itemValue="RJ 117.063" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.064" itemValue="RJ 117.064" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.065" itemValue="RJ 117.065" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.066" itemValue="RJ 117.066" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.067" itemValue="RJ 117.067" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.068" itemValue="RJ 117.068" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.069" itemValue="RJ 117.069" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.070" itemValue="RJ 117.070" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.071" itemValue="RJ 117.071" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.072" itemValue="RJ 117.072" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.073" itemValue="RJ 117.073" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.074" itemValue="RJ 117.074" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.075" itemValue="RJ 117.075" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.076" itemValue="RJ 117.076" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.077" itemValue="RJ 117.077" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.078" itemValue="RJ 117.078" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.079" itemValue="RJ 117.079" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.080" itemValue="RJ 117.080" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.081" itemValue="RJ 117.081" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.082" itemValue="RJ 117.082" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.083" itemValue="RJ 117.083" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.084" itemValue="RJ 117.084" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.085" itemValue="RJ 117.085" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.086" itemValue="RJ 117.086" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.087" itemValue="RJ 117.087" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.088" itemValue="RJ 117.088" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.089" itemValue="RJ 117.089" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.090" itemValue="RJ 117.090" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		
+		<f:selectItem itemLabel="RJ 117.091" itemValue="RJ 117.091" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.092" itemValue="RJ 117.092" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.093" itemValue="RJ 117.093" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.094" itemValue="RJ 117.094" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.095" itemValue="RJ 117.095" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.096" itemValue="RJ 117.096" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.097" itemValue="RJ 117.097" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.098" itemValue="RJ 117.098" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.099" itemValue="RJ 117.099" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.100" itemValue="RJ 117.100" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.101" itemValue="RJ 117.101" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.102" itemValue="RJ 117.102" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.103" itemValue="RJ 117.103" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.104" itemValue="RJ 117.104" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.105" itemValue="RJ 117.105" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.106" itemValue="RJ 117.106" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.107" itemValue="RJ 117.107" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.108" itemValue="RJ 117.108" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.109" itemValue="RJ 117.109" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.110" itemValue="RJ 117.110" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.111" itemValue="RJ 117.111" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.112" itemValue="RJ 117.112" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.113" itemValue="RJ 117.113" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.114" itemValue="RJ 117.114" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.115" itemValue="RJ 117.115" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.116" itemValue="RJ 117.116" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.117" itemValue="RJ 117.117" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.118" itemValue="RJ 117.118" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.119" itemValue="RJ 117.119" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.120" itemValue="RJ 117.120" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		
+		<f:selectItem itemLabel="RJ 117.121" itemValue="RJ 117.121" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.122" itemValue="RJ 117.122" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.123" itemValue="RJ 117.123" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.124" itemValue="RJ 117.124" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.125" itemValue="RJ 117.125" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.126" itemValue="RJ 117.126" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.127" itemValue="RJ 117.127" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.128" itemValue="RJ 117.128" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.129" itemValue="RJ 117.129" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.130" itemValue="RJ 117.130" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.131" itemValue="RJ 117.131" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.132" itemValue="RJ 117.132" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.133" itemValue="RJ 117.133" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.134" itemValue="RJ 117.134" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.135" itemValue="RJ 117.135" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.136" itemValue="RJ 117.136" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.137" itemValue="RJ 117.137" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.138" itemValue="RJ 117.138" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.139" itemValue="RJ 117.139" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.140" itemValue="RJ 117.140" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.141" itemValue="RJ 117.141" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.142" itemValue="RJ 117.142" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.143" itemValue="RJ 117.143" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.144" itemValue="RJ 117.144" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.145" itemValue="RJ 117.145" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.146" itemValue="RJ 117.146" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.147" itemValue="RJ 117.147" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.148" itemValue="RJ 117.148" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.149" itemValue="RJ 117.149" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.150" itemValue="RJ 117.150" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		
+		
+		<f:selectItem itemLabel="RJ 117.151" itemValue="RJ 117.151" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.152" itemValue="RJ 117.152" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.153" itemValue="RJ 117.153" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.154" itemValue="RJ 117.154" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.155" itemValue="RJ 117.155" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.156" itemValue="RJ 117.156" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.157" itemValue="RJ 117.157" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.158" itemValue="RJ 117.158" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.159" itemValue="RJ 117.159" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.160" itemValue="RJ 117.160" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.161" itemValue="RJ 117.161" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.162" itemValue="RJ 117.162" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.163" itemValue="RJ 117.163" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.164" itemValue="RJ 117.164" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.165" itemValue="RJ 117.165" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.166" itemValue="RJ 117.166" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.167" itemValue="RJ 117.167" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.168" itemValue="RJ 117.168" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.169" itemValue="RJ 117.169" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.170" itemValue="RJ 117.170" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.171" itemValue="RJ 117.171" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		<f:selectItem itemLabel="RJ 117.172" itemValue="RJ 117.172" value="#{reclamacaoBean.reclamacao.veiculo}"/>
+		
+						
+					
+					
+</p:selectOneMenu>
+									
+					<p:outputLabel for="dataCadastro" value="Data de Cadastro:" />
+				<p:calendar id="dataCadastro"
+					value="#{reclamacaoBean.reclamacao.dataCadastro}" required="true"
+					requiredMessage="O campo 'Data de Cadastro' é obrigatório"
+					size="10" locale="pt_BR" />	
+										
+					<p:outputLabel for="local" value="Local da Irregularidade: " />
+					<p:selectOneMenu id="local" converter="omnifaces.SelectItemsConverter" filter="true" value="#{reclamacaoBean.reclamacao.local}" style="width:200px">
+		<f:selectItem itemLabel="Selecione o Local" itemValue="" value="#{reclamacaoBean.reclamacao.local}" noSelectionOption="true" />
+		<f:selectItem itemLabel="ALCANTARÁ" itemValue="ALCANTARÁ" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="BARRETO" itemValue="BARRETO" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="BARRO VERMELHO" itemValue="BARRO VERMELHO" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="CAJU" itemValue="CAJU" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="CAMARRÃO" itemValue="CAMARRÃO" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="CASTELO" itemValue="CASTELO" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="CEMITERIO SG" itemValue="CEMITERIO SG" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="CEMITERIO SÃO MIGUEL" itemValue="CEMITERIO SÃO MIGUEL" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="CENTRO SG" itemValue="CENTRO SG" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="CIDADE NOVA" itemValue="CIDADE NOVA" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="CLUBE MAÚA" itemValue="CLUBE MAÚA" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="CONTORNO" itemValue="CONTORNO" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="ESTRELA DO NORTE" itemValue="ESTRELA DO NORTE" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="ESTÁCIO" itemValue="ESTÁCIO" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="FORRÓ DO BILL" itemValue="FORRÓ DO BILL" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="GARAGEM" itemValue="GARAGEM" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="ITAÚNA" itemValue="ITAÚNA" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="LARGO DA CARIOCA" itemValue="LARGO DA CARIOCA" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="MUTONDO" itemValue="MUTONDO" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="NEVES" itemValue="NEVES" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="NOVA CIDADE" itemValue="NOVA CIDADE" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="PARAISO" itemValue="PARAISO" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="PASSEIO" itemValue="PASSEIO" value="#{reclamacaoBean.reclamacao.local}"/> 
+		<f:selectItem itemLabel="PITA" itemValue="PITA" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="PONTE RIO x NITERÓI" itemValue="PONTE RIO x NITERÓI" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="PRAÇA ONZE" itemValue="PRAÇA ONZE" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="PREFEITURA DO RIO" itemValue="PREFEITURA DO RIO" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="PRESIDENTE VARGAS" itemValue="PRESIDENTE VARGAS" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="SANS PEÑA" itemValue="SANS PEÑA" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="TRINDADE" itemValue="TRINDADE" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="TUNEL 500 ANOS" itemValue="TUNEL 5OO ANOS" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="UERJ MARACANÃ" itemValue="UERJ MARACANÃ" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="UERJ SG" itemValue="UERJ SG" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="URUGUAIANA" itemValue="URUGUAIANA" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="VENDA DA CRUZ" itemValue="VENDA DA CRUZ" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="VILA ISABEL" itemValue="VILA ISABEL" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="VILA LAGE" itemValue="VILA LAGE" value="#{reclamacaoBean.reclamacao.local}"/>
+		<f:selectItem itemLabel="ZÉ GAROTO" itemValue="ZE GAROTO" value="#{reclamacaoBean.reclamacao.local}"/>
+						
+					
+					
+</p:selectOneMenu>
+				
+				<p:outputLabel for="reclamacao" value="Reclamacao: " />
+<p:selectOneMenu id="reclamacao" value="#{reclamacaoBean.reclamacao.reclamacao}" converter="omnifaces.SelectItemsConverter" filter="true" style="width:200px" required="true"
+						requiredMessage="O campo 'Reclamacao' é obrigatório">
+		
+		
+<f:selectItem itemLabel="Selecione a Reclamação" 				itemValue="" value="#{reclamacaoBean.reclamacao.reclamacao}" noSelectionOption="true"  />
+<f:selectItem itemLabel="(IF) Ar-Condicionado Ruim"				 itemValue="(IF) Ar-Condicionado Ruim" 			 value="#{reclamacaoBean.reclamacao.reclamacao}"/>
+<f:selectItem itemLabel="(IF) Insetos no interior do Veiculo" 	 itemValue="(IF) Insetos no interior do Veiculo" value="#{reclamacaoBean.reclamacao.reclamacao}"/>
+<f:selectItem itemLabel="(IF) Má conservação do Coletivo"		 itemValue="(IF) Má conservação do Coletivo" 	 value="#{reclamacaoBean.reclamacao.reclamacao}"/>
+<f:selectItem itemLabel="(IF) Validador Ruim"					 itemValue="(IF) Validador Ruim" 		         value="#{reclamacaoBean.reclamacao.reclamacao}"/>
+<f:selectItem itemLabel="(IF) Elevador com defeito" 			 itemValue="(IF) Elevador com defeito" 			 value="#{reclamacaoBean.reclamacao.reclamacao}"/>
+<f:selectItem itemLabel="(PS) Preço" 							 itemValue="(PS) Preço" 						 value="#{reclamacaoBean.reclamacao.reclamacao}"/>
+<f:selectItem itemLabel="(PS) Itinerário"					 	 itemValue="(PS) Itinerário" 					 value="#{reclamacaoBean.reclamacao.reclamacao}"/>
+<f:selectItem itemLabel="(PS) Má Conduta do Motorista"			 itemValue="(PS) Má Conduta do Motorista" 		 value="#{reclamacaoBean.reclamacao.reclamacao}"/>
+<f:selectItem itemLabel="(PS) Superlotação do Coletivo" 		 itemValue="(PS) Superlotação do Coletivo"		 value="#{reclamacaoBean.reclamacao.reclamacao}"/>
+<f:selectItem itemLabel="Outros" 								 itemValue="Outros" 							 value="#{reclamacaoBean.reclamacao.reclamacao}"/>
+</p:selectOneMenu>
+					
+					
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar"
+						actionListener="#{reclamacaoBean.salvar}"
+						update=":mensagem :formCadastro:painel :formListagem:tabela" />
+					<p:commandButton value="Fechar" oncomplete="PF('dialogo').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		
+		
+
+<p:dialog header="Painel: Edição da Reclamação" widgetVar="dialogoEdit"
+			draggable="false" resizable="false" modal="false" closable="false">
+			
+			<h:form id="formEdit" enctype="multipart/form-data">
+				<h:panelGrid id="painelEdit" columns="2">
+
+			<p:outputLabel for="cliente" value="Nome do Cliente: " />
+					<p:inputText id="cliente" maxlength="50" size="30" 
+						value="#{reclamacaoBean.reclamacao.cliente}" required="false"
+						requiredMessage="O campo 'Cliente' é obrigatório"  />
+
+				
+				<p:outputLabel for="telefone" value="Telefone Cliente: " />
+					<p:inputText id="telefone" maxlength="50" size="30" 
+						value="#{reclamacaoBean.reclamacao.foneCliente}" required="false"
+						requiredMessage="O campo 'Telefone do Cliente' é obrigatório"  />
+
+					<p:outputLabel for="matricula" value="Matricula do Motorista: " />
+					<p:inputText id="matricula" maxlength="5" size="10"
+						value="#{reclamacaoBean.reclamacao.matricula}"  required="true"
+						requiredMessage="O campo 'Matricula' é obrigatório"
+						converterMessage="Informe um valor válido para o campo 'Matricula'"
+						validatorMessage="Informe um valor entre 0 e 13000 para o campo 'Matricula'">
+						<f:validateLongRange minimum="0" maximum="13000" />
+					</p:inputText>
+					
+					<p:outputLabel for="veiculo" value="Veículo: " />
+					<p:inputText id="veiculo" maxlength="10" size="15"
+						value="#{reclamacaoBean.reclamacao.veiculo}"  required="true"
+						requiredMessage="O campo 'Veículo' é obrigatório" />
+				
+				
+				<p:outputLabel for="dataCadastro" value="Data da Infração:" />
+				<p:inputText id="dataCadastro"
+					value="#{reclamacaoBean.reclamacao.dataCadastro}" disabled="true" />	
+					
+					<p:outputLabel for="local" value="Local da Infração: " />
+					<p:inputText id="local" maxlength="20" size="20"
+						value="#{reclamacaoBean.reclamacao.local}"  required="true"
+						requiredMessage="O campo 'Local' é obrigatório" />
+				
+				<p:outputLabel for="irregularidade" value="Reclamação: " />
+					<p:inputTextarea id="irregularidade" rows="3" cols="30" 
+						value="#{reclamacaoBean.reclamacao.reclamacao}"  required="true"
+						requiredMessage="O campo 'Reclamação' é obrigatório"/>
+						
+					<p:outputLabel for="foto" value="Arquivo Multimidia: " />
+					<p:fileUpload id="foto" mode="advanced"
+						fileUploadListener="#{reclamacaoBean.upload}" update=":mensagem"
+						auto="true" />
+								
+								
+        <p:outputLabel for="console" value="Situação da Reclamação: "/>
+        
+        <p:selectOneRadio id="console" value="#{reclamacaoBean.reclamacao.status}">
+   <f:selectItem itemLabel="Concluida" itemValue="Conluida" />
+            <f:selectItem itemLabel="em Analise" itemValue="em Analise" />
+        </p:selectOneRadio>
+				
+		
+				
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar"
+						actionListener="#{reclamacaoBean.salvar}"
+						update=":mensagem :formEdit:painelEdit :formListagem:tabela" oncomplete="PF('dialogoEdit').hide();"/>
+					<p:commandButton value="Fechar" oncomplete="PF('dialogoEdit').hide();"  />
+				</h:panelGrid>
+			</h:form>
+			
+		
+		
+		</p:dialog>
+		
+	</ui:define>
+</ui:composition>

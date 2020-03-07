@@ -1,0 +1,41 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+
+	<ui:define name="corpo">
+
+
+		<title>Consulta de Ocorrências</title>
+		<h:form id="formulario">
+			<p:panel header="Consula de Ocorrências">
+				<h:panelGrid columns="12">
+
+					<p:outputLabel for="data" value="Data :" />
+					<p:calendar id="data" size="10" locale="pt_BR"></p:calendar>
+					<p:commandButton icon="ui-icon-search" />
+
+
+
+					<p:outputLabel for="matricula" value="Matricula :" />
+					<p:inputText id="matricula" maxlength="5" size="10" value="" />
+					<p:commandButton icon="ui-icon-search" />
+
+
+					<p:outputLabel for="status" value="Status :" />
+					<p:selectOneMenu id="status" value="" style="width:125px">
+						<f:selectItem itemLabel="Selecione o Status" itemValue="" />
+						<f:selectItem itemLabel="em Analise" itemValue="em Analise" />
+						<f:selectItem itemLabel="Concluida" itemValue="Concluida" />
+					</p:selectOneMenu>
+					<p:commandButton icon="ui-icon-search" />
+
+
+				</h:panelGrid>
+
+			</p:panel>
+		</h:form>
+	</ui:define>
+</ui:composition>

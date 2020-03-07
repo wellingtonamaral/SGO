@@ -1,0 +1,47 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+
+	<ui:define name="corpo">
+		<title>Gerenciar Motoristas</title>
+		
+		
+		<p:panel id="hospitalvisitpanel" header="" style="text-align:center;">
+			<h:form id="hospital_form">
+				
+							<p:panelGrid id="hospital_visit_panel1"  columns="4" layout="grid" style="width:100%">
+								<f:facet name="header">
+									<p:outputLabel value="Add Remarks" style="color:black" />
+								</f:facet>
+
+							
+								<h:outputLabel for="followup" value="Follow Up" />
+								<p:inputTextarea id="followup" value="" rows="2" cols="20" autoResize="false" maxlength="449" style="width:200px;font-size: 14px;" tabindex="11" placeholder="Add Follow Up"/>
+
+								<h:outputLabel for="remarks" value="Remarks" />
+								<p:inputTextarea id="remarks" value="" rows="2" cols="20" autoResize="false" maxlength="449" style="width:200px;font-size: 14px;" tabindex="12" placeholder="Add Remarks"/>
+
+
+								<h:outputLabel for="price" value="Price" />
+								<p:inputText id="price" value="" style="width:200px;font-size: 16px;" maxlength="6" tabindex="13" placeholder="price(in Rs.0.00)">
+							
+								</p:inputText>
+
+								<p:outputLabel value="" />
+								<p:outputLabel value="" />
+
+							</p:panelGrid>
+			
+			</h:form>
+
+		</p:panel>
+		
+		
+		
+		
+		
+	</ui:define>
+</ui:composition>

@@ -1,0 +1,183 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+
+	<ui:define name="corpo">
+<title>Gerenciar Reclamações</title>  
+		<h:form id="formListagem">
+			<p:panel header="Gerenciar Reclamação">
+				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
+					paginator="true" value="#{reclamacaoBean.reclamacoes}" var="reclamacao"
+					rows="5" paginatorPosition="top">
+					<f:facet name="header">
+						
+
+						
+					</f:facet>
+					<p:column headerText="Nome do Cliente" filterBy="#{reclamacao.cliente}"
+						filterMatchMode="contains" sortBy="#{reclamacao.cliente}">
+						<h:outputText value="#{reclamacao.cliente}" />
+					</p:column>
+					
+					<p:column headerText="Telefone Cliente"  sortBy="#{reclamacao.foneCliente}">
+						<h:outputText value="#{reclamacao.foneCliente}" />
+					</p:column>
+
+					<p:column headerText="Nome do Motorista" filterBy="#{reclamacao.nome}"
+						filterMatchMode="contains" sortBy="#{reclamacao.nome}">
+						<h:outputText value="#{reclamacao.nome}" />
+					</p:column>
+
+					<p:column headerText="Mat. Motorista" sortBy="#{reclamacao.matricula}">
+						<h:outputText value="#{reclamacao.matricula}" />
+					</p:column>
+					
+					<p:column headerText="Data de Cadastro"
+					sortBy="#{reclamacao.dataCadastro}">
+					<h:outputText value="#{reclamacao.dataCadastro}">
+						<f:convertDateTime locale="pt_BR" />
+					</h:outputText>
+				</p:column>
+
+									
+					<p:column headerText="Local da Irregularidade"
+						filterBy="#{reclamacao.local}"
+						filterMatchMode="contains"
+						sortBy="#{reclamacao.local}">
+						<h:outputText value="#{reclamacao.local}" />
+					</p:column>
+					
+					<p:column headerText="Irregularidade"
+					sortBy="#{reclamacao.reclamacao}" filterBy="#{reclamacao.reclamacao}">
+					<h:outputText value="#{reclamacao.reclamacao}">
+						<f:convertDateTime locale="pt_BR" />
+					</h:outputText>
+				</p:column>
+				
+				<p:column filterBy="#{reclamacao.status}" headerText="Status"  filterMatchMode="contains" sortBy="#{reclamacao.status}">
+				<h:outputText value="#{reclamacao.status}" />
+				</p:column>
+				
+
+				<p:column headerText="Opções" >
+					<p:commandButton title="Excluir" icon="ui-icon-trash" rendered="#{autenticacaoBean.temPermissoes(['A'])}" actionListener="#{reclamacaoBean.excluir}"					
+						update=":mensagem :formListagem:tabela">
+						<p:confirm header="Confirmação"
+							message="Deseja excluir a Reclamação?" icon="ui-icon-alert" />
+						<f:attribute name="reclamacaoSelecionada" value="#{reclamacao}" />
+					</p:commandButton>
+
+					<p:commandButton title="Editar" icon="ui-icon-pencil"
+						actionListener="#{reclamacaoBean.editar}"
+						update=":mensagem :formEdit:painelEdit"
+						oncomplete="PF('dialogoEdit').show();">
+						<f:attribute name="reclamacaoSelecionada" value="#{reclamacao}" />
+						<f:actionListener
+							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton>
+					
+					<p:commandButton title="Download" icon="ui-icon-arrowthick-1-s"
+						actionListener="#{reclamacaoBean.download}"
+						ajax="false">
+						<f:attribute name="reclamacaoSelecionada" value="#{reclamacao}" />
+						<p:fileDownload value="#{reclamacaoBean.foto}" />
+					</p:commandButton>
+					
+									</p:column>
+			</p:dataTable>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			</p:panel>
+		</h:form>
+
+<p:dialog header="Painel: Edição da Reclamação" widgetVar="dialogoEdit"
+			draggable="false" resizable="false" modal="false" closable="false">
+			
+			<h:form id="formEdit" enctype="multipart/form-data">
+				<h:panelGrid id="painelEdit" columns="2">
+
+			<p:outputLabel for="cliente" value="Nome do Cliente: " />
+					<p:inputText id="cliente" maxlength="50" size="30" 
+						value="#{reclamacaoBean.reclamacao.cliente}" required="false"
+						requiredMessage="O campo 'Cliente' é obrigatório" disabled="true" />
+
+				
+				<p:outputLabel for="telefone" value="Telefone Cliente: " />
+					<p:inputText id="telefone" maxlength="50" size="30" 
+						value="#{reclamacaoBean.reclamacao.foneCliente}" required="false"
+						requiredMessage="O campo 'Telefone do Cliente' é obrigatório" disabled="true" />
+
+					<p:outputLabel for="matricula" value="Matricula do Motorista: " />
+					<p:inputText id="matricula" maxlength="5" size="10"
+						value="#{reclamacaoBean.reclamacao.matricula}" disabled="true" required="true"
+						requiredMessage="O campo 'Matricula' é obrigatório"
+						converterMessage="Informe um valor válido para o campo 'Matricula'"
+						validatorMessage="Informe um valor entre 0 e 13000 para o campo 'Matricula'">
+						<f:validateLongRange minimum="0" maximum="13000" />
+					</p:inputText>
+					
+					<p:outputLabel for="veiculo" value="Veículo: " />
+					<p:inputText id="veiculo" maxlength="10" size="15"
+						value="#{reclamacaoBean.reclamacao.veiculo}" disabled="true" required="true"
+						requiredMessage="O campo 'Veículo' é obrigatório" />
+				
+				
+				<p:outputLabel for="dataCadastro" value="Data da Infração:" />
+				<p:inputText id="dataCadastro"
+					value="#{reclamacaoBean.reclamacao.dataCadastro}" disabled="true" />	
+					
+					<p:outputLabel for="local" value="Local da Infração: " />
+					<p:inputText id="local" maxlength="20" size="20"
+						value="#{reclamacaoBean.reclamacao.local}" disabled="true" required="true"
+						requiredMessage="O campo 'Local' é obrigatório" />
+				
+				<p:outputLabel for="irregularidade" value="Reclamação: " />
+					<p:inputTextarea id="irregularidade" rows="3" cols="30" 
+						value="#{reclamacaoBean.reclamacao.reclamacao}" disabled="true" required="true"
+						requiredMessage="O campo 'Reclamação' é obrigatório"/>
+						
+					<p:outputLabel for="foto" value="Arquivo Multimidia: " />
+					<p:fileUpload id="foto" mode="advanced"
+						fileUploadListener="#{reclamacaoBean.upload}" update=":mensagem"
+						auto="true" />
+								
+								
+        <p:outputLabel for="console" value="Situação da Reclamação: "/>
+        
+        <p:selectOneRadio id="console" value="#{reclamacaoBean.reclamacao.status}">
+            <f:selectItem itemLabel="Concluida" itemValue="Conluida" />
+            <f:selectItem itemLabel="em Analise" itemValue="em Analise" />
+        </p:selectOneRadio>
+  
+				
+		
+				
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar"
+						actionListener="#{reclamacaoBean.salvar}"
+						update=":mensagem :formEdit:painelEdit :formListagem:tabela" oncomplete="PF('dialogoEdit').hide();"/>
+					<p:commandButton value="Fechar" oncomplete="PF('dialogoEdit').hide();"  />
+				</h:panelGrid>
+			</h:form>
+			
+		
+		
+		</p:dialog>
+
+
+
+
+
+
+	</ui:define>
+</ui:composition>

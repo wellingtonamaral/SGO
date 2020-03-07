@@ -1,0 +1,175 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+
+	<ui:define name="corpo">
+
+<title>Gerenciar Infração</title>  
+		<h:form id="formListagem">
+		 
+			<p:panel header="Consulta de Infrações">
+				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
+					paginator="true" value="#{infracaoBean.infracoes}" var="infracao"
+					rows="5" paginatorPosition="top">
+					<f:facet name="header">
+						
+
+						
+					</f:facet>
+
+					<p:column headerText="Nome do Motorista" filterBy="#{infracao.nome}"
+						filterMatchMode="contains" sortBy="#{infracao.nome}">
+						<h:outputText value="#{infracao.nome}" />
+					</p:column>
+
+					<p:column headerText="Mat. Motorista" sortBy="#infracao.matricula}">
+						<h:outputText value="#{infracao.matricula}" />
+					</p:column>
+					
+					<p:column headerText="Data da Infracao"
+					sortBy="#{infracao.dataCadastro}">
+					<h:outputText value="#{infracao.dataCadastro}">
+						<f:convertDateTime locale="pt_BR" />
+					</h:outputText>
+				</p:column>
+
+											
+					
+					<p:column headerText="Local da Infração"
+						filterBy="#{infracao.local}"
+						filterMatchMode="contains"
+						sortBy="#{infracao.local}">
+						<h:outputText value="#{infracao.local}" />
+					</p:column>
+					
+					<p:column headerText="Infração"
+						filterBy="#{infracao.infracao}"
+						filterMatchMode="contains"
+						sortBy="#{infracao.infracao}">
+						<h:outputText value="#{infracao.infracao}" />
+					</p:column>
+					
+					
+					
+					
+					<p:column filterBy="#{infracao.status}" headerText="Status"  filterMatchMode="contains" sortBy="#{infracao.status}">
+					            
+					            <h:outputText value="#{infracao.status}" />
+					        </p:column>
+					
+			        
+
+				<p:column headerText="Opções">
+						<p:commandButton title="Excluir" icon="ui-icon-trash" rendered="#{autenticacaoBean.temPermissoes(['A'])}"	actionListener="#{infracaoBean.excluir}"					
+						update=":mensagem :formListagem:tabela">
+						<p:confirm header="Confirmação"
+							message="Deseja excluir a Infração?" icon="ui-icon-alert" />
+						<f:attribute name="infracaoSelecionada" value="#{infracao}" />
+					</p:commandButton>
+
+				<p:commandButton title="Editar" icon="ui-icon-pencil"
+						actionListener="#{infracaoBean.editar}"
+						update=":mensagem :formEdit:painelEdit :formListagem:tabela"
+						oncomplete="PF('dialogoEdit').show();">
+						<f:attribute name="infracaoSelecionada" value="#{infracao}" />
+						<f:actionListener
+							type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+					</p:commandButton>
+					<p:commandButton title="Download" icon="ui-icon-arrowthick-1-s"
+						actionListener="#{infracaoBean.download}"
+						ajax="false">
+						<f:attribute name="infracaoSelecionada" value="#{infracao}" />
+						<p:fileDownload value="#{infracaoBean.foto}" />
+					</p:commandButton>
+					
+					
+									</p:column>
+			</p:dataTable>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			</p:panel>
+		</h:form>
+
+		<p:dialog header="Painel: Edição da Infrações" widgetVar="dialogoEdit"
+			draggable="false" resizable="false" modal="false" closable="false">
+			
+			<h:form id="formEdit" enctype="multipart/form-data">
+				<h:panelGrid id="painelEdit" columns="2">
+
+
+				
+				<p:outputLabel for="nome" value="Nome do Motorista: " />
+					<p:inputText id="nome" maxlength="50" size="30" 
+						value="#{infracaoBean.infracao.nome}" required="false"
+						requiredMessage="O campo 'Motorista' é obrigatório" disabled="true" />
+
+					<p:outputLabel for="matricula" value="Matricula do Motorista: " />
+					<p:inputText id="matricula" maxlength="5" size="10"
+						value="#{infracaoBean.infracao.matricula}" disabled="true" required="true"
+						requiredMessage="O campo 'Matricula' é obrigatório"
+						converterMessage="Informe um valor válido para o campo 'Matricula'"
+						validatorMessage="Informe um valor entre 0 e 13000 para o campo 'Matricula'">
+						<f:validateLongRange minimum="0" maximum="13000" />
+					</p:inputText>
+					
+					<p:outputLabel for="veiculo" value="Veículo: " />
+					<p:inputText id="veiculo" maxlength="10" size="15"
+						value="#{infracaoBean.infracao.veiculo}" disabled="true" required="true"
+						requiredMessage="O campo 'Veículo' é obrigatório" />
+				
+				
+				<p:outputLabel for="dataCadastro" value="Data da Infração:" />
+				<p:inputText id="dataCadastro"
+					value="#{infracaoBean.infracao.dataCadastro}" disabled="true" />	
+					
+					<p:outputLabel for="local" value="Local da Infração: " />
+					<p:inputText id="local" maxlength="20" size="20"
+						value="#{infracaoBean.infracao.local}" disabled="true" required="true"
+						requiredMessage="O campo 'Local' é obrigatório" />
+				
+				<p:outputLabel for="irregularidade" value="Infração: " />
+					<p:inputTextarea id="irregularidade" rows="3" cols="30" 
+						value="#{infracaoBean.infracao.infracao}" disabled="true" required="true"
+						requiredMessage="O campo 'Infração' é obrigatório"/>
+						
+					<p:outputLabel for="foto" value="Arquivo Multimidia: " />
+					<p:fileUpload id="foto" mode="advanced" required="true" requiredMessage="oi"
+						fileUploadListener="#{infracaoBean.upload}" update=":mensagem"
+						auto="true" />
+								
+								
+   <p:outputLabel for="console" value="Situação da Reclamação: "/>
+        
+        <p:selectOneRadio id="console" value="#{infracaoBean.infracao.status}">
+            <f:selectItem itemLabel="Concluida" itemValue="Conluida" />
+            <f:selectItem itemLabel="em Analise" itemValue="em Analise" />
+        </p:selectOneRadio>
+				
+		
+				
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar"
+						actionListener="#{infracaoBean.salvar}"
+						update=":mensagem :formEdit:painelEdit :formListagem:tabela" oncomplete="PF('dialogoEdit').hide();"/>
+					<p:commandButton value="Fechar" oncomplete="PF('dialogoEdit').hide();"  />
+				</h:panelGrid>
+			</h:form>
+			
+		
+		
+		</p:dialog>
+		
+		
+		
+	</ui:define>
+</ui:composition>

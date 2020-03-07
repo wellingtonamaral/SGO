@@ -1,0 +1,244 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:p="http://primefaces.org/ui" template="/WEB-INF/template.xhtml"
+	xmlns:f="http://java.sun.com/jsf/core">
+
+
+	<ui:define name="corpo">
+		<title>Gerenciar Motoristas</title>
+		<h:form id="formListagem">
+
+			<p:panel header="Gerenciar Motoristas">
+				<p:dataTable id="tabela" emptyMessage="Nenhum registro encontrado."
+					paginator="true" value="#{motoristaBean.motoristas}"
+					var="motorista" rows="5" paginatorPosition="top">
+					<f:facet name="header">
+						<p:commandButton icon="ui-icon-plus"
+							actionListener="#{motoristaBean.novo}"
+							value="Adicionar Motorista" oncomplete="PF('dialogo').show();"
+							update=":mensagem :formCadastro:painel">
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+
+						
+					</f:facet>
+
+					<p:column headerText="Nome" filterBy="#{motorista.nome}"
+						filterMatchMode="contains" sortBy="#{motorista.nome}">
+						<h:outputText value="#{motorista.nome}" />
+					</p:column>
+
+					<p:column headerText="Matricula" sortBy="#{motorista.matricula}">
+						<h:outputText value="#{motorista.matricula}" />
+					</p:column>
+
+					<p:column headerText="CPF" sortBy="#{motorista.cpf}">
+						<h:outputText value="#{motorista.cpf}" />
+
+					</p:column>
+
+					<p:column headerText="Linha" filterBy="#{motorista.linha}"
+						filterMatchMode="contains" sortBy="#{motorista.linha}">
+						<h:outputText value="#{motorista.linha}" />
+					</p:column>
+
+					<p:column headerText="Data de Cadastro"
+						sortBy="#{motorista.dataCadastro}">
+						<h:outputText value="#{motorista.dataCadastro}">
+							<f:convertDateTime locale="pt_BR" />
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Opções">
+						<p:commandButton title="Excluir" icon="ui-icon-trash"
+							actionListener="#{motoristaBean.excluir}"
+							update=":mensagem :formListagem:tabela" rendered="#{autenticacaoBean.temPermissoes(['A'])}">
+							<p:confirm header="Confirmação"
+								message="Deseja excluir o produto?" icon="ui-icon-alert" />
+							<f:attribute name="motoristaSelecionado" value="#{motorista}" />
+						</p:commandButton>
+
+						<p:commandButton title="Editar" icon="ui-icon-pencil"
+							actionListener="#{motoristaBean.editar}"
+							update=":mensagem :formEdit:painelEdit"
+							oncomplete="PF('dialogoEdit').show();">
+							<f:attribute name="motoristaSelecionado" value="#{motorista}" />
+							<f:actionListener
+								type="org.omnifaces.eventlistener.ResetInputAjaxActionListener" />
+						</p:commandButton>
+					</p:column>
+				</p:dataTable>
+
+				<p:confirmDialog global="true">
+					<p:commandButton value="Sim" type="button"
+						styleClass="ui-confirmdialog-yes" icon="ui-icon-check" />
+					<p:commandButton value="Não" type="button"
+						styleClass="ui-confirmdialog-no" icon="ui-icon-close" />
+				</p:confirmDialog>
+			</p:panel>
+		</h:form>
+
+		<p:dialog header="Cadastrar Motorista" widgetVar="dialogo"
+			draggable="false" resizable="false" modal="false" closable="false">
+			<h:form id="formCadastro" enctype="multipart/form-data">
+
+				<h:panelGrid id="painel" columns="4" layout="grid">
+					<p:outputLabel for="nome" value="Nome: " />
+					<p:inputText id="nome" maxlength="50" size="30"
+						value="#{motoristaBean.motorista.nome}" required="true"
+						requiredMessage="O campo 'Nome' é obrigatório" />
+
+
+
+
+					<p:outputLabel for="matricula" value="Matricula: " />
+					<p:inputText id="matricula" maxlength="5" size="15"
+						value="#{motoristaBean.motorista.matricula}" required="true"
+						requiredMessage="O campo 'Matricula' é obrigatório"
+						converterMessage="Informe um valor válido para o campo 'Matricula'"
+						validatorMessage="Informe um valor entre 0 e 13000 para o campo 'Matricula'">
+						<f:validateLongRange minimum="0" maximum="13000" />
+					</p:inputText>
+
+					<p:outputLabel for="cpf" value="CPF: " />
+					<p:inputMask id="cpf" mask="999.999.999-99" size="15"
+						value="#{motoristaBean.motorista.cpf}" required="true"
+						requiredMessage="O campo 'CPF' é obrigatório" />
+
+
+
+				
+
+					<p:outputLabel for="celular" value="Celular: " />
+					<p:inputMask id="celular" mask="(99)99999-9999" size="15"
+						value="#{motoristaBean.motorista.celular}" required="true"
+						requiredMessage="O campo 'Celular' é obrigatório" />
+						
+<p:outputLabel for="linha" value="Linha: " />
+<p:selectOneMenu id="linha" value="#{motoristaBean.motorista.linha}" converter="omnifaces.SelectItemsConverter" filter="true" style="width:200px" required="true"
+						requiredMessage="O campo 'Linha' é obrigatório">
+		
+		
+<f:selectItem itemLabel="Selecione a Linha" itemValue="" value="#{motoristaBean.motorista.linha}" noSelectionOption="true"  />
+<f:selectItem itemLabel="110 - São Gonçalo x Passeio" itemValue="110 - São Gonçalo x Passeio" value="#{motoristaBean.motorista.linha}"/>
+<f:selectItem itemLabel="423 - São Gonçalo x Vila Isabel" itemValue="423 - São Gonçalo x Vila Isabel" value="#{motoristaBean.motorista.linha}"/>
+<f:selectItem itemLabel="426 - São Gonçalo x Estácio" itemValue="426 - São Gonçalo x Estácio" value="#{motoristaBean.motorista.linha}"/>
+<f:selectItem itemLabel="428 - São Gonçalo x Vila Isabel (UERJ)" itemValue="428 - São Gonçalo x Vila Isabel (UERJ)" value="#{motoristaBean.motorista.linha}"/>
+<f:selectItem itemLabel="535 - Alcântara x Estácio" itemValue="535 - Alcântara x Estácio" value="#{motoristaBean.motorista.linha}"/>
+<f:selectItem itemLabel="545 - Alcântara x Candelária" itemValue="545 - Alcântara x Candelária" value="#{motoristaBean.motorista.linha}"/>
+
+<f:selectItem itemLabel="2110 - São Gonçalo x Castelo" itemValue="2110 - São Gonçalo x Castelo" value="#{motoristaBean.motorista.linha}"/>
+<f:selectItem itemLabel="4110 - São Gonçalo x Castelo" itemValue="4110 - São Gonçalo x Castelo" value="#{motoristaBean.motorista.linha}"/>
+<f:selectItem itemLabel="2423 - São Gonçalo x Vila Isabel" itemValue="2423 - São Gonçalo x Vila Isabel" value="#{motoristaBean.motorista.linha}"/>
+<f:selectItem itemLabel="2535 - Alcântara x Estácio" itemValue="2535 - Alcântara x Estácio" value="#{motoristaBean.motorista.linha}"/>
+<f:selectItem itemLabel="2545 -  Alcântara x Candelária" itemValue="2545 -  Alcântara x Candelária" value="#{motoristaBean.motorista.linha}"/>
+</p:selectOneMenu>
+
+					<p:outputLabel for="dataCadastro" value="Data de Cadastro:" />
+					<p:calendar id="dataCadastro" 
+						value="#{motoristaBean.motorista.dataCadastro}" required="true"
+						requiredMessage="O campo 'Data de Cadastro' é obrigatório"
+						size="15" locale="pt_BR" />
+
+
+					<p:outputLabel for="cnh" value="CNH: " />
+					<p:inputMask id="cnh" mask="99999999999" size="15"
+						value="#{motoristaBean.motorista.cnh}" required="true"
+						requiredMessage="O campo 'CNH' é obrigatório" />
+						
+						<p:outputLabel for="cnhValidade" value="Validade da CNH: " />
+					<p:calendar id="cnhValidade" value="#{motoristaBean.motorista.cnhValidade}" required="true"
+						requiredMessage="O campo 'Validade da CNH' é obrigatório"
+						size="15" locale="pt_BR" />
+
+
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar"
+						actionListener="#{motoristaBean.salvar}"
+						update=":mensagem :formCadastro:painel :formListagem:tabela" />
+					<p:commandButton value="Fechar" oncomplete="PF('dialogo').hide();" />
+				</h:panelGrid>
+			</h:form>
+		</p:dialog>
+		
+		<p:dialog header="Painel: Edição de Motoristas" widgetVar="dialogoEdit"
+			draggable="false" resizable="false" modal="false" closable="false">
+			
+			<h:form id="formEdit" enctype="multipart/form-data">
+				<h:panelGrid id="painelEdit" columns="2">
+
+
+
+				<p:outputLabel for="nome" value="Nome: " />
+					<p:inputText id="nome" maxlength="50" size="30"
+						value="#{motoristaBean.motorista.nome}" required="true"
+						requiredMessage="O campo 'Nome' é obrigatório" />
+
+
+
+
+					<p:outputLabel for="matricula" value="Matricula: " />
+					<p:inputText id="matricula" maxlength="5" size="15"
+						value="#{motoristaBean.motorista.matricula}" required="true"
+						requiredMessage="O campo 'Matricula' é obrigatório"
+						converterMessage="Informe um valor válido para o campo 'Matricula'"
+						validatorMessage="Informe um valor entre 0 e 13000 para o campo 'Matricula'">
+						<f:validateLongRange minimum="0" maximum="13000" />
+					</p:inputText>
+
+					<p:outputLabel for="cpf" value="CPF: " />
+					<p:inputMask id="cpf" mask="999.999.999-99" size="15"
+						value="#{motoristaBean.motorista.cpf}" required="true"
+						requiredMessage="O campo 'CPF' é obrigatório" />
+
+
+
+				
+
+					<p:outputLabel for="celular" value="Celular: " />
+					<p:inputMask id="celular" mask="(99)99999-9999" size="15"
+						value="#{motoristaBean.motorista.celular}" required="true"
+						requiredMessage="O campo 'Celular' é obrigatório" />
+						
+								
+					<p:outputLabel for="linha" value="Linha (Itinerário): " />
+						<p:inputText id="linha" maxlength="40" size="25"
+						value="#{motoristaBean.motorista.linha}" required="true"
+						requiredMessage="O campo 'Linha' é obrigatório"/>
+						
+						<p:outputLabel for="dataCadastro" value="Data de Cadastro:" />
+					<p:calendar id="dataCadastro" 
+						value="#{motoristaBean.motorista.dataCadastro}" required="true"
+						requiredMessage="O campo 'Data de Cadastro' é obrigatório"
+						size="15" locale="pt_BR" />
+
+
+					<p:outputLabel for="cnh" value="CNH: " />
+					<p:inputMask id="cnh" mask="99999999999" size="15"
+						value="#{motoristaBean.motorista.cnh}" required="true"
+						requiredMessage="O campo 'CNH' é obrigatório" />
+						
+						<p:outputLabel for="cnhValidade" value="Validade da CNH: " />
+					<p:calendar id="cnhValidade" value="#{motoristaBean.motorista.cnhValidade}" required="true"
+						requiredMessage="O campo 'Validade da CNH' é obrigatório"
+						size="15" locale="pt_BR" />
+					
+				</h:panelGrid>
+
+				<h:panelGrid columns="2">
+					<p:commandButton value="Salvar"
+						actionListener="#{motoristaBean.salvar}" 
+						update=":mensagem :formEdit:painelEdit :formListagem:tabela" oncomplete="PF('dialogoEdit').hide();"/>
+					<p:commandButton value="Fechar" oncomplete="PF('dialogoEdit').hide();"  />
+				</h:panelGrid>
+			</h:form>
+			
+		
+		
+		</p:dialog>
+	</ui:define>
+</ui:composition>
